@@ -46,7 +46,7 @@ def generate_jwt() -> str:
     # Use the logged-in user's email so Tableau applies their own permissions.
     # Falls back to the service account if viewer auth is not enabled.
     try:
-        user_email = st.experimental_user.email or USERNAME
+        user_email = st.user.email or USERNAME
     except Exception:
         user_email = USERNAME
     now = datetime.now(timezone.utc)
@@ -121,9 +121,9 @@ with st.sidebar:
     selection = st.radio("Navigate to", pages, label_visibility="collapsed")
     st.markdown("---")
     try:
-        user_email = st.experimental_user.email
+        user_email = st.user.email
         st.caption(f"👤 {user_email}")
-        st.caption(f"🔍 debug: {dict(st.experimental_user)}")
+        st.caption(f"🔍 debug: {dict(st.user)}")
     except Exception as e:
         user_email = None
         st.caption(f"⚠️ No user info: {e}")
