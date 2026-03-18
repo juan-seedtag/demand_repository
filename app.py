@@ -18,7 +18,7 @@ if not st.user.is_logged_in:
         st.markdown("Sign in with your Seedtag Google account to continue.")
         st.markdown("<br>", unsafe_allow_html=True)
         if st.button("Sign in with Google", use_container_width=True):
-            st.login()
+            st.login("google")
     st.stop()
 
 # ── Domain restriction ─────────────────────────────────────────────────────────
