@@ -43,6 +43,9 @@ DASHBOARDS = [
 
 # ── JWT generator ──────────────────────────────────────────────────────────────
 def generate_jwt() -> str:
+    # Use the logged-in user's email so Tableau applies their own permissions.
+    # Falls back to the service account if viewer auth is not enabled.
+    user_email = getattr(st.experimental_user, "email", None) or USERNAME
     now = datetime.now(timezone.utc)
     return jwt.encode(
         {
@@ -50,7 +53,7 @@ def generate_jwt() -> str:
             "exp": now + timedelta(minutes=5),
             "jti": str(uuid.uuid4()),
             "aud": "tableau",
-            "sub": USERNAME,
+            "sub": user_email,
             "scp": ["tableau:views:embed"],
         },
         CA_SECRET_VAL,
@@ -113,6 +116,12 @@ with st.sidebar:
     st.markdown("---")
     pages = ["🏠 Home"] + [f"📈 {d['name']}" for d in DASHBOARDS]
     selection = st.radio("Navigate to", pages, label_visibility="collapsed")
+    st.markdown("---")
+    user_email = getattr(st.experimental_user, "email", None)
+    if user_email:
+        st.caption(f"👤 {user_email}")
+    if st.button("Log out", use_container_width=True):
+        st.logout()
 
 
 # ── Home / README page ────────────────────────────────────────────────────────
