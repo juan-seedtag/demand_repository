@@ -5,9 +5,8 @@ import toml
 from datetime import datetime, timedelta, timezone
 from functools import wraps
 
-# Allow OAuth over HTTP for local development only
-if os.environ.get("ENVIRONMENT") != "production":
-    os.environ.setdefault("OAUTHLIB_INSECURE_TRANSPORT", "1")
+# Allow OAuth over HTTP for local development
+os.environ.setdefault("OAUTHLIB_INSECURE_TRANSPORT", "1")
 os.environ.setdefault("OAUTHLIB_RELAX_TOKEN_SCOPE", "1")
 
 from flask import session, redirect, request
@@ -98,10 +97,9 @@ app = dash.Dash(
 )
 server = app.server
 server.secret_key = FLASK_SECRET
-IS_PROD = os.environ.get("ENVIRONMENT") == "production"
 server.config.update(
     SESSION_COOKIE_SAMESITE="Lax",
-    SESSION_COOKIE_SECURE=IS_PROD,
+    SESSION_COOKIE_SECURE=False,
 )
 
 # ── Google OAuth ───────────────────────────────────────────────────────────────
