@@ -9,20 +9,6 @@ st.set_page_config(
     layout="wide",
 )
 
-# ── Auth gate ──────────────────────────────────────────────────────────────────
-if not st.user.is_logged_in:
-    # No "google" argument needed here; it pulls from the [auth] section
-    st.login()
-    st.stop() # CRITICAL: Stop execution until the user authenticates
-
-# ── Domain restriction ─────────────────────────────────────────────────────────
-# Check if st.user has an email before accessing .endswith
-if st.user.get("email") and not st.user.email.endswith("@seedtag.com"):
-    st.error(f"Access restricted to Seedtag accounts. (Logged in as {st.user.email})")
-    if st.button("Log out"):
-        st.logout()
-    st.stop()
-
 # ── Tableau config ─────────────────────────────────────────────────────────────
 SERVER       = st.secrets["tableau"]["server"]
 SITE         = st.secrets["tableau"]["site"]
@@ -124,9 +110,6 @@ def render_tableau(url: str, height: int = 900, show_tabs: bool = False) -> None
 # ── Sidebar navigation ────────────────────────────────────────────────────────
 with st.sidebar:
     st.title("📊 Demand Dashboards")
-    st.caption(f"👤 {st.user.email}")
-    if st.button("Log out", use_container_width=True):
-        st.logout()
     st.markdown("---")
     pages = ["🏠 Home"] + [f"📈 {d['name']}" for d in DASHBOARDS]
     selection = st.radio("Navigate to", pages, label_visibility="collapsed")
