@@ -121,11 +121,7 @@ with st.sidebar:
     selection = st.radio("Navigate to", pages, label_visibility="collapsed")
     st.markdown("---")
     try:
-        st.caption(f"🔍 is_logged_in: {st.user.is_logged_in}")
-        if st.user.is_logged_in:
-            st.caption(f"👤 {st.user.email}")
-        else:
-            st.caption("⚠️ Not logged in via viewer auth")
+        st.caption(f"🔍 st.user attrs: {[a for a in dir(st.user) if not a.startswith('_')]}")
     except Exception as e:
         st.caption(f"⚠️ Error: {e}")
     if st.button("Log out", use_container_width=True):
