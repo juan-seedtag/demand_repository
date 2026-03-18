@@ -106,7 +106,7 @@ def show_login() -> None:
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown(
             f"""
-            <a href="{auth_url}" target="_self" style="text-decoration:none;">
+            <a href="{auth_url}" target="_top" style="text-decoration:none;">
               <div style="
                 display:flex; align-items:center; gap:12px;
                 background:white; border:1px solid #dadce0; border-radius:6px;
