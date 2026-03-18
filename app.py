@@ -46,7 +46,7 @@ def generate_jwt() -> str:
     # Use the logged-in user's email so Tableau applies their own permissions.
     # Falls back to the service account if viewer auth is not enabled.
     try:
-        user_email = st.user.email or USERNAME
+        user_email = st.user.email if st.user.is_logged_in else USERNAME
     except Exception:
         user_email = USERNAME
     now = datetime.now(timezone.utc)
@@ -121,12 +121,13 @@ with st.sidebar:
     selection = st.radio("Navigate to", pages, label_visibility="collapsed")
     st.markdown("---")
     try:
-        user_email = st.user.email
-        st.caption(f"👤 {user_email}")
-        st.caption(f"🔍 debug: {dict(st.user)}")
+        st.caption(f"🔍 is_logged_in: {st.user.is_logged_in}")
+        if st.user.is_logged_in:
+            st.caption(f"👤 {st.user.email}")
+        else:
+            st.caption("⚠️ Not logged in via viewer auth")
     except Exception as e:
-        user_email = None
-        st.caption(f"⚠️ No user info: {e}")
+        st.caption(f"⚠️ Error: {e}")
     if st.button("Log out", use_container_width=True):
         st.logout()
 
