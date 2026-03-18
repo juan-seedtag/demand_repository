@@ -122,10 +122,11 @@ with st.sidebar:
     st.markdown("---")
     try:
         user_email = st.experimental_user.email
-    except Exception:
-        user_email = None
-    if user_email:
         st.caption(f"👤 {user_email}")
+        st.caption(f"🔍 debug: {dict(st.experimental_user)}")
+    except Exception as e:
+        user_email = None
+        st.caption(f"⚠️ No user info: {e}")
     if st.button("Log out", use_container_width=True):
         st.logout()
 
