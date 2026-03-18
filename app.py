@@ -11,15 +11,7 @@ st.set_page_config(
 
 # ── Auth gate ──────────────────────────────────────────────────────────────────
 if not st.user.is_logged_in:
-    _, col, _ = st.columns([1, 2, 1])
-    with col:
-        st.markdown("<br><br>", unsafe_allow_html=True)
-        st.markdown("## 📊 Demand Dashboards")
-        st.markdown("Sign in with your Seedtag Google account to continue.")
-        st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("Sign in with Google", use_container_width=True):
-            st.login("google")
-    st.stop()
+    st.login("google")
 
 # ── Domain restriction ─────────────────────────────────────────────────────────
 if not st.user.email.endswith("@seedtag.com"):
