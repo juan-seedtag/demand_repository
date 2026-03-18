@@ -11,11 +11,14 @@ st.set_page_config(
 
 # ── Auth gate ──────────────────────────────────────────────────────────────────
 if not st.user.is_logged_in:
-    st.login("google")
+    # Do not pass "google" here; Streamlit 1.45.1 handles this via secrets
+    st.login() 
+    st.stop() # Ensure the rest of the script doesn't run until login is successful
 
 # ── Domain restriction ─────────────────────────────────────────────────────────
-if not st.user.email.endswith("@seedtag.com"):
-    st.error("Access restricted to Seedtag accounts.")
+# Check if st.user has an email before accessing .endswith
+if hasattr(st.user, "email") and st.user.email and not st.user.email.endswith("@seedtag.com"):
+    st.error(f"Access restricted to Seedtag accounts. (Logged in as {st.user.email})")
     if st.button("Log out"):
         st.logout()
     st.stop()
