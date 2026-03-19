@@ -41,14 +41,31 @@ DASHBOARDS = [
     },
 ]
 
+# ── User resolution ────────────────────────────────────────────────────────────
+def get_user_email() -> str:
+    # 1. IAP header (when running behind Google IAP + Nginx)
+    try:
+        iap_email = st.context.headers.get("X-Goog-Authenticated-User-Email", "")
+        if iap_email:
+            return iap_email.replace("accounts.google.com:", "")
+    except Exception:
+        pass
+
+    # 2. Streamlit viewer auth (when deployed on Streamlit Cloud with viewer auth)
+    try:
+        email = st.user.get("email")
+        if email:
+            return email
+    except Exception:
+        pass
+
+    # 3. Fallback to service account (local dev)
+    return USERNAME
+
+
 # ── JWT generator ──────────────────────────────────────────────────────────────
 def generate_jwt() -> str:
-    # Use the logged-in user's email so Tableau applies their own permissions.
-    # Falls back to the service account if viewer auth is not enabled.
-    try:
-        user_email = st.user.get("email") or USERNAME
-    except Exception:
-        user_email = USERNAME
+    user_email = get_user_email()
     now = datetime.now(timezone.utc)
     return jwt.encode(
         {
@@ -120,14 +137,7 @@ with st.sidebar:
     pages = ["🏠 Home"] + [f"📈 {d['name']}" for d in DASHBOARDS]
     selection = st.radio("Navigate to", pages, label_visibility="collapsed")
     st.markdown("---")
-    try:
-        st.caption(f"🔍 st.user: {st.user.to_dict()}")
-        if st.user.get("email"):
-            st.caption(f"👤 {st.user.get('email')}")
-    except Exception as e:
-        st.caption(f"⚠️ Error: {e}")
-    if st.button("Log out", use_container_width=True):
-        st.logout()
+    st.caption(f"👤 {get_user_email()}")
 
 
 # ── Home / README page ────────────────────────────────────────────────────────
